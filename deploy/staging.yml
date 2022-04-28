@@ -1,0 +1,11 @@
+- hosts:
+    - staging
+
+  tasks:
+    - include: ../provision/tasks/main.yml
+    - include: ../provision/tasks/frontend.yml
+    - include: ../provision/tasks/nginx.yml
+    - include: ../provision/tasks/docs.yml
+
+  handlers:
+    - include: ../provision/handlers/main.yml

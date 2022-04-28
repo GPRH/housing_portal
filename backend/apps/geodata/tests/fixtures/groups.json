@@ -1,0 +1,33 @@
+[
+  {
+    "model": "auth.group",
+    "pk": 4,
+    "fields": {
+      "name": "TestColombiaGovernmentUserGroup",
+      "permissions": [2000, 2001]
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 5,
+    "fields": {
+      "name": "TestColombiaAdminUserGroup",
+      "permissions": [2000, 2001]
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 6,
+    "fields": { "name": "TestColombiaUserGroup", "permissions": [2000, 2001] }
+  },
+  {
+    "model": "auth.group",
+    "pk": 7,
+    "fields": { "name": "TestSoledadUserGroup", "permissions": [2001] }
+  },
+  {
+    "model": "auth.group",
+    "pk": 8,
+    "fields": { "name": "TestCartagenaUserGroup", "permissions": [2000] }
+  }
+]

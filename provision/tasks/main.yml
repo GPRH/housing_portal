@@ -1,0 +1,83 @@
+- name: Clone the repo
+  become: yes
+  become_user: "{{ ssh_user }}"
+  git: >
+    repo=git@github.com:bjohare/wb-housing-prototype.git
+    dest="{{ application_path }}"
+    key_file="{{ github_keyfile }}"
+    accept_hostkey=yes
+    update=yes
+    version="{{ version }}"
+
+- name: Deploy backend .env file
+  become: true
+  template: src=../files/backend.env dest={{application_path}}/.env
+
+- name: Add certbot repo
+  apt_repository:
+    repo: ppa:certbot/certbot
+
+- name: Install os packages
+  become: true
+  apt:
+    pkg:
+      [
+        "python3-dev",
+        "python3-pip",
+        "python3-apt",
+        "supervisor",
+        "s3cmd",
+        "gdal-bin",
+        "python3-gdal",
+        "libgdal-dev",
+        "libtiff-tools",
+        "libtiff5",
+        "software-properties-common",
+        "certbot",
+        "python3-certbot-nginx",
+      ]
+    state: latest
+    update_cache: yes
+    cache_valid_time: 600
+
+- name: Upgrade latest pip, setuptools, and docker-compose with pip
+  become: true
+  pip:
+    name: "{{ item.name }}"
+    state: latest
+  with_items:
+    - { name: pip, version: "latest", install: true }
+    - { name: setuptools, version: "latest", install: true }
+    - { name: docker, version: "latest", install: true }
+    - { name: docker-compose, version: "latest", install: true }
+  when: (item.version=="latest" and item.install)
+  ignore_errors: yes
+
+- name: Copy gdal2tiles to drone directory
+  become: true
+  copy:
+    src: ../files/gdal2tiles.py
+    dest: "{{ drone_data_location }}/gdal2tiles.py"
+    owner: gprh
+    mode: o+x
+
+- name: Make gdal2tiles executable
+  become: true
+  file: dest={{ drone_data_location }}/gdal2tiles.py mode=a+x
+
+- name: Stop docker services
+  docker_compose:
+    project_src: "{{ application_path }}"
+    state: present
+    stopped: yes
+    files:
+      - "{{ deployment_env }}.yml"
+
+- name: Build and run docker services
+  docker_compose:
+    project_src: "{{ application_path }}"
+    build: yes
+    state: present
+    restarted: yes
+    files:
+      - "{{ deployment_env }}.yml"

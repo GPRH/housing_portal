@@ -1,0 +1,12 @@
+#! /bin/bash
+
+if [ -z "$1" ]
+then
+  printf "\nRunning all tests. \n\n"
+else
+  printf "\nRunning $1 \n\n"
+fi
+
+
+
+docker-compose -f test.yml run --rm backend coverage run --source . -m py.test -s $1

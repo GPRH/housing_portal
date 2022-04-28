@@ -1,0 +1,54 @@
+---
+- name: Install nginx
+  become: true
+  apt: name=nginx state=latest
+
+- name: NGINX | Remove Default Configuration
+  become: true
+  file: path=/etc/nginx/sites-enabled/default state=absent
+
+- name: NGINX | Copy Default Host Config
+  become: true
+  template: src=../files/nginx_site.conf dest=/etc/nginx/sites-available/{{ domain_name }}
+
+- name: install letsencrypt
+  become: true
+  apt: name=letsencrypt state=latest
+
+- name: create letsencrypt directory
+  become: true
+  file: name=/var/www/{{ domain_name }} state=directory
+
+- name: NGINX | Add Letsencrypt Host Config
+  become: true
+  template: src=../files/letsencrypt.conf dest=/etc/nginx/sites-enabled/letsencrypt_{{ domain_name }}.conf
+  notify: restart nginx
+
+- name: Create letsencrypt certificate
+  become: true
+  shell: letsencrypt certonly -n --webroot -w /var/www/{{ domain_name }} -m {{ letsencrypt_email }} --agree-tos -d {{ domain_name }}
+  args:
+    creates: /etc/letsencrypt/live/{{ domain_name }}
+  notify: restart nginx
+
+- name: Delete letsencrypt host config.
+  become: true
+  file:
+    path: /etc/nginx/sites-enabled/letsencrypt_{{ domain_name }}.conf
+    state: absent
+  notify: restart nginx
+
+- name: Add letsencrypt cronjob for cert renewal
+  become: true
+  cron:
+    name: letsencrypt_renew_{{ portal_instance }}
+    special_time: weekly
+    job: letsencrypt certonly --renew-by-default -n --webroot -w /var/www/{{ domain_name }} -m bjohare@gmail.com --agree-tos -d {{ domain_name }} --post-hook "systemctl reload nginx"
+
+- name: NGINX | Activate SSL Domain
+  become: true
+  file: src=/etc/nginx/sites-available/{{ domain_name }} dest=/etc/nginx/sites-enabled/{{ domain_name }} state=link
+  notify: restart nginx
+
+- name: Flush redis cache
+  shell: "{{ application_path }}/flushcache"

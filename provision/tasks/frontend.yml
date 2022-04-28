@@ -1,0 +1,13 @@
+- name: Deploy frontend .env file
+  become: true
+  template: src=../files/frontend.env dest={{application_path}}/frontend/.env
+
+- name: Install frontend dependencies
+  become: yes
+  become_user: "{{ ssh_user }}"
+  command: chdir="{{ application_path }}/frontend" npm install
+
+- name: Build Frontend
+  become: yes
+  become_user: "{{ ssh_user }}"
+  command: chdir="{{ application_path }}/frontend" npm run build

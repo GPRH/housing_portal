@@ -1,0 +1,84 @@
+#grp-navigation {
+  background-image: none;
+  background-color: white;
+  color: black;
+  opacity: 1;
+  border-bottom: 1px solid #444444;
+  height: 40px;
+}
+
+#grp-navigation a:hover {
+  color: #444444;
+}
+
+h1#grp-admin-title {
+  font-size: 1.5em;
+  margin-top: 6px;
+}
+
+#grp-navigation img {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-right: 10px;
+  float: left;
+}
+
+#grp-navigation ul {
+  border: none;
+}
+
+ul#grp-user-tools {
+  background-color: #eeeeee;
+  border-left: 1px solid #444444;
+  border-right: 1px solid #444444;
+  height: 39px;
+}
+
+#grp-user-tools > li {
+  border: none;
+  height: 39px;
+}
+
+ul#grp-user-options {
+  border: none;
+  height: 40px;
+  border: none;
+}
+
+#grp-user-tools > li:last-child {
+  height: 40px;
+  opacity: 1;
+}
+
+.grp-user-options-container {
+  border: none;
+}
+
+ul#grp-user-tools > a {
+  border: none;
+}
+
+#grp-navigation ul li.grp-collapse.grp-open > ul {
+  border: none;
+}
+
+a.user-options-handler {
+  background-color: #eeeeee;
+  opacity: 1;
+  border-bottom: 1px solid #444444;
+  height: 19px;
+}
+
+#grp-navigation ul li.grp-collapse.grp-open > ul li {
+  height: 39px;
+  border: none;
+}
+
+#grp-navigation ul li.grp-collapse.grp-open > ul {
+  background-color: #eeeeee;
+  border: none;
+}
+
+#grp-recent-actions-module {
+  display: none;
+}

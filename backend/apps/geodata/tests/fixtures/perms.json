@@ -1,0 +1,20 @@
+[
+  {
+    "model": "auth.permission",
+    "pk": 2000,
+    "fields": {
+      "name": "Can view TestCartagena",
+      "content_type": 1,
+      "codename": "view_testcartagena"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 2001,
+    "fields": {
+      "name": "Can view TestSoledad",
+      "content_type": 1,
+      "codename": "view_testsoledad"
+    }
+  }
+]

@@ -1,0 +1,41 @@
+{
+  "name": "Independencia",
+  "layers": [
+    {
+      "name": "aoi",
+      "db_layers": ["aoi"],
+      "model": "aoi",
+      "mapping": "aoi"
+    },
+    {
+      "name": "sectors",
+      "db_layers": ["sectors"],
+      "model": "sector",
+      "mapping": "sectors"
+    },
+    {
+      "name": "buildings",
+      "db_layers": ["buildings"],
+      "model": "building",
+      "mapping": "buildings"
+    },
+    {
+      "name": "greenspace",
+      "db_layers": ["greenspace"],
+      "model": "greenspace",
+      "mapping": "greenspaces"
+    },
+    {
+      "name": "roads",
+      "db_layers": ["roads"],
+      "model": "road",
+      "mapping": "roads"
+    },
+    {
+      "name": "confidence",
+      "db_layers": ["confidence"],
+      "model": "confidencevalue",
+      "mapping": "building_confidence"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+#! /bin/bash
+
+read_var() {
+    VAR=$(grep $1 $2 | head -1 | xargs)
+    IFS="=" read -ra VAR <<< "$VAR"
+    echo ${VAR[1]}
+}
+
+DEPLOYMENT_ENV=$(read_var DEPLOYMENT_ENV .env)
+
+printf "\nFlushing cache... "
+docker-compose -f $DEPLOYMENT_ENV.yml exec redis redis-cli FLUSHALL
+printf "\n"

@@ -1,0 +1,95 @@
+version: "3.3"
+
+volumes:
+  postgis_data_test: {}
+  exports: {}
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ./compose/local/Dockerfile # relative to build context
+    container_name: housing_portal_backend
+    depends_on:
+      - postgres
+      - pgbouncer
+      - redis
+    volumes:
+      - ./backend:/app
+      - ../imports:/imports
+      - exports:/exports
+      - ../images:/images
+      - ../drone:/drone
+    command: sh -c "/wait && /start.sh"
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      WAIT_HOSTS: pgbouncer:5439
+
+  postgres:
+    image: kartoza/postgis:12.1
+    container_name: housing_portal_db_test
+    volumes:
+      - postgis_data_test:/data
+    restart: unless-stopped
+    env_file: .env
+
+  frontend:
+    image: node:10-alpine
+    container_name: housing_portal_frontend
+    command: npm run serve
+    volumes:
+      - ./.env:/app/.env:ro
+      - ./frontend:/app
+    working_dir: /app
+    restart: unless-stopped
+
+  pgbouncer:
+    image: pgbouncer/pgbouncer
+    container_name: housing_portal_pgbouncer
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    ports:
+      - "5439:5439"
+    env_file: .env
+    environment:
+      WAIT_HOSTS: postgres:5432
+    logging:
+      driver: none
+
+  nginx:
+    image: nginx:alpine
+    container_name: housing_portal_nginx
+    ports:
+      - "8000:80"
+    depends_on:
+      - backend
+    volumes:
+      - ./backend/media/:/media/
+      - ./backend/staticfiles/:/staticfiles/
+      - ./nginx/dev.conf:/etc/nginx/nginx.conf:ro
+      - ../tiles:/data
+      - ../images:/images:ro
+      - ./docs/_build/html:/docs:ro
+      - ./drone:/drone-viewer:ro
+      - ../drone:/drone:ro
+      - exports:/exports:ro
+    restart: unless-stopped
+    logging:
+      driver: none
+
+  redis:
+    image: redis:3.0
+    container_name: redis_cache
+    restart: unless-stopped
+    logging:
+      driver: none
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: housing_portal_mailhog
+    ports:
+      - "8025:8025"
+    logging:
+      driver: none

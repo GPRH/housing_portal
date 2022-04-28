@@ -1,0 +1,42 @@
+version: "3.3"
+
+volumes:
+  postgis_data: {}
+  exports: {}
+  devseed_postgis_data: {}
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ./compose/production/Dockerfile # relative to build context
+    depends_on:
+      - postgres
+    volumes:
+      - ./backend:/app
+      - ../imports:/imports
+      - /mnt/gprh_data:/data
+      - exports:/exports
+    command: /gunicorn.sh
+    entrypoint: /entrypoint.sh
+    restart: unless-stopped
+    ports:
+      - $BACKEND_PORT:8000
+    env_file: .env
+
+  postgres:
+    image: kartoza/postgis:12.1
+    volumes:
+      - postgis_data:/var/lib/postgresql/data
+    env_file: .env
+
+  redis:
+    image: redis:3.0
+
+  backups:
+    image: prodrigestivill/postgres-backup-local
+    restart: on-failure
+    depends_on:
+      - postgres
+    volumes:
+      - /tmp/backups/:/backups/

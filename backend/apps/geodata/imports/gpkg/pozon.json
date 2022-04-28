@@ -1,0 +1,53 @@
+{
+  "name": "El Pozon",
+  "layers": [
+    {
+      "name": "aoi",
+      "db_layers": ["aoi"],
+      "model": "aoi",
+      "mapping": "aoi"
+    },
+    {
+      "name": "sectors",
+      "db_layers": ["sectors"],
+      "model": "sector",
+      "mapping": "sectors"
+    },
+    {
+      "name": "blocks",
+      "db_layers": ["blocks"],
+      "model": "block",
+      "mapping": "blocks"
+    },
+    {
+      "name": "buildings",
+      "db_layers": ["buildings"],
+      "model": "building",
+      "mapping": "buildings"
+    },
+    {
+      "name": "roads",
+      "db_layers": ["roads"],
+      "model": "road",
+      "mapping": "roads"
+    },
+    {
+      "name": "greenspace",
+      "db_layers": ["greenspace"],
+      "model": "greenspace",
+      "mapping": "greenspaces"
+    },
+    {
+      "name": "images",
+      "db_layers": ["images"],
+      "model": "buildingimage",
+      "mapping": "images"
+    },
+    {
+      "name": "confidence",
+      "db_layers": ["confidence"],
+      "model": "confidencevalue",
+      "mapping": "building_confidence"
+    }
+  ]
+}

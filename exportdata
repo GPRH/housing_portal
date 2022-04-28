@@ -1,0 +1,20 @@
+#! /bin/bash
+
+if [ $# -ne 1 ];
+then
+  printf "\nWrong number of arguments. \n\n"
+  exit 1
+else
+  printf "\nExporting $1 $2 $3\n\n"
+fi
+
+
+read_var() {
+    VAR=$(grep $1 $2 | head -1 | xargs)
+    IFS="=" read -ra VAR <<< "$VAR"
+    echo ${VAR[1]}
+}
+
+DEPLOYMENT_ENV=$(read_var DEPLOYMENT_ENV .env)
+
+docker-compose -f $DEPLOYMENT_ENV.yml run --rm backend python manage.py runscript exports --dir-policy each --script-args "$1"

@@ -1,0 +1,27 @@
+#! /bin/bash
+
+if [ $1 = 'cluster' ];
+then
+  printf "\nClustering indexes. \n\n"
+else
+  if [ $# -ne 3 ];
+  then
+    printf "\nWrong number of arguments. \n\n"
+    exit 1
+  else
+    printf "\nRunning $1 $2 $3\n\n"
+  fi
+fi
+
+read_var() {
+    VAR=$(grep $1 $2 | head -1 | xargs)
+    IFS="=" read -ra VAR <<< "$VAR"
+    echo ${VAR[1]}
+}
+
+DEPLOYMENT_ENV=$(read_var DEPLOYMENT_ENV .env)
+
+docker-compose -f $DEPLOYMENT_ENV.yml run --rm backend python manage.py runscript loaddata --dir-policy each --script-args $1 $2 $3
+printf "\nFlushing cache... "
+docker-compose -f $DEPLOYMENT_ENV.yml exec redis redis-cli FLUSHALL
+printf "\n"

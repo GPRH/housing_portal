@@ -1,0 +1,9 @@
+- name: Build developer documentation
+  become: yes
+  become_user: "{{ ssh_user }}"
+  command: chdir="{{ application_path }}/docs/dev" make html
+
+- name: Build user documentation
+  become: yes
+  become_user: "{{ ssh_user }}"
+  command: chdir="{{ application_path }}/docs/user" make html

@@ -1,0 +1,48 @@
+version: "3.3"
+
+volumes:
+  postgis_data: {}
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ./compose/production/Dockerfile # relative to build context
+    container_name: housing_portal_backend_${PORTAL_INSTANCE}
+    depends_on:
+      - postgres
+      - pgbouncer
+    volumes:
+      - ./backend:/app
+      - /mnt/data/imports:/imports
+      - /mnt/data/exports:/exports
+      - /mnt/data/images:/images
+      - /mnt/data/drone:/drone
+    command: sh -c "/wait && /gunicorn.sh"
+    restart: unless-stopped
+    ports:
+      - ${BACKEND_PORT}:8000
+    env_file: .env
+    environment:
+      WAIT_HOSTS: pgbouncer:5439
+
+  postgres:
+    image: kartoza/postgis:12.1
+    container_name: housing_portal_db_${PORTAL_INSTANCE}
+    volumes:
+      - postgis_data:/var/lib/postgresql
+    restart: unless-stopped
+    env_file: .env
+
+  pgbouncer:
+    image: pgbouncer/pgbouncer
+    container_name: housing_portal_pgbouncer_${PORTAL_INSTANCE}
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      WAIT_HOSTS: postgres:5432
+
+  redis:
+    image: redis:3.0
+    container_name: redis_${PORTAL_INSTANCE}
+    restart: unless-stopped

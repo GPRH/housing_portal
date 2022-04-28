@@ -1,0 +1,18 @@
+{% load account %}
+{% autoescape off %}
+
+You're receiving this e-mail because a contact request has been received from the GPRH application.
+
+GPRH Contact Form Submission
+=================================
+
+Name: {{ name }}
+Email: {{ email }}
+
+Message:
+
+{{ message }}
+
+==================================
+
+{% endautoescape %}
